@@ -17,10 +17,10 @@ router.route('/')
     //index page
     .get(catchAsync(campgrounds.index))
     //submit new camp form
-    // .post(isLoggedIn, validateCampground, catchAsync(campgrounds.createCampground));
-    .post(upload.array('image'), (req, res) => {
-        console.log(req.body, req.files);
-    })
+    .post(isLoggedIn, upload.array('image'), validateCampground, catchAsync(campgrounds.createCampground));
+// .post(upload.array('image'), (req, res) => {
+//     console.log(req.body, req.files);
+// })
 
 
 //new 1 - FORM
