@@ -9,7 +9,8 @@ const catchAsync = require('../utils/catchAsync');
 const Campground = require('../models/campground');
 const { isLoggedIn, isAuthor, validateCampground } = require('../middleware');
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/' })
+const { storage } = require('../cloudinary');
+const upload = multer({ storage });
 
 //Fancy way to Restructure Routes:
 router.route('/')
@@ -17,7 +18,7 @@ router.route('/')
     .get(catchAsync(campgrounds.index))
     //submit new camp form
     // .post(isLoggedIn, validateCampground, catchAsync(campgrounds.createCampground));
-    .post(upload.array('image'),(req, res) => {
+    .post(upload.array('image'), (req, res) => {
         console.log(req.body, req.files);
     })
 
