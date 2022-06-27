@@ -1,3 +1,7 @@
+if (process.env.NODE_env !== 'production') {
+    require('dotenv').config();
+}
+
 //IMPORTING
 const express = require('express');
 const app = express();
@@ -19,8 +23,8 @@ const reviewsRoutes = require('./routes/reviews');
 
 //CONNECTING MONGOOSE
 main()
-.then(() => console.log('Mongo connection opened!'))
-.catch(err => console.log(err))
+    .then(() => console.log('Mongo connection opened!'))
+    .catch(err => console.log(err))
 
 async function main() {
     await mongoose.connect('mongodb://localhost:27017/yelp-camp')
