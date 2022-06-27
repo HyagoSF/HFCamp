@@ -55,6 +55,14 @@ module.exports.renderEditForm = async (req, res) => {
 module.exports.updateCampground = async (req, res) => {
     const { id } = req.params;
     const campground = await Campground.findByIdAndUpdate(id, req.body, { runValidators: true, new: true });
+
+    //my req.files... makes me an array, and I cant push an array into an array, so i'm gonna create this variable imgs to make it an array
+    const imgs = req.files.map(f => ({ url: f.path, filename: f.filename }));
+
+    //map over the array that has been added to req.files, take the path and the filename, make a new object of each one, put that into a new array: newCamp.images
+    campground.images.push(...imgs);
+    await campground.save();
+
     req.flash('success', `Your ${campground.title}, has been updated!!`)
     res.redirect(`/campgrounds/${campground._id}`);
 }

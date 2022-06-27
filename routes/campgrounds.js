@@ -31,7 +31,7 @@ router.route('/:id')
     //show form page
     .get(catchAsync(campgrounds.showCampground))
     //update campground
-    .put(isLoggedIn, isAuthor, validateCampground, catchAsync(campgrounds.updateCampground))
+    .put(isLoggedIn, isAuthor, upload.array('image'), validateCampground, catchAsync(campgrounds.updateCampground))
     //delete
     .delete(isLoggedIn, isAuthor, catchAsync(campgrounds.deleteCampground))
 
