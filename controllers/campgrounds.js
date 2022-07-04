@@ -1,4 +1,5 @@
 const Campground = require('../models/campground');
+const { cloudinary } = require('../cloudinary/index');
 
 
 module.exports.index = async (req, res) => {
@@ -54,6 +55,7 @@ module.exports.renderEditForm = async (req, res) => {
 
 module.exports.updateCampground = async (req, res) => {
     const { id } = req.params;
+    console.log(req.body);
     const campground = await Campground.findByIdAndUpdate(id, req.body, { runValidators: true, new: true });
 
     //my req.files... makes me an array, and I cant push an array into an array, so i'm gonna create this variable imgs to make it an array
@@ -61,6 +63,19 @@ module.exports.updateCampground = async (req, res) => {
 
     //map over the array that has been added to req.files, take the path and the filename, make a new object of each one, put that into a new array: newCamp.images
     campground.images.push(...imgs);
+
+    if (req.body.deleteImages) {
+
+        //for each image I want to delete destroy it from cloudinary
+        for (let filename of req.body.deleteImages) {
+            await cloudinary.uploader.destroy(filename)
+        }
+
+        //I'm gonna pull out from campground those images whose file name is in req.body.deleteImages, but only if there is deleteImages on the req.body
+        await campground.updateOne({ $pull: { images: { filename: { $in: req.body.deleteImages } } } })
+        console.log(campground)
+    }
+
     await campground.save();
 
     req.flash('success', `Your ${campground.title}, has been updated!!`)

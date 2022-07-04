@@ -3,14 +3,22 @@ const review = require('./review');
 const Schema = mongoose.Schema;
 
 
+// https://res.cloudinary.com/demo/image/upload/c_crop,g_north_west,h_150,w_200/sample.jpg
+
+
+const ImageSchema = new Schema({
+    url: String,
+    filename: String
+})
+
+//We use virtual because we don't need to store this to our database  
+ImageSchema.virtual('thumbnail').get(function() {
+    return this.url.replace('/upload', '/upload/w_200')
+})
+
 const CampgroundSchema = new Schema({
     title: String,
-    images: [
-        {
-            url: String,
-            filename: String
-        }
-    ],
+    images: [ImageSchema],
     price: Number,
     description: String,
     location: String,
