@@ -34,8 +34,14 @@ const seedDB = async () => {
         const random1000 = Math.floor(Math.random() * 1000);
         const price = Math.floor(Math.random() * 20) + 10;
         const camp = new Campground({
-            author: '62b5afe5fbc74c6aa23d551d',
+            author: '62b5afe5fbc74c6aa23d551d',  //my userID
             location: `${cities[random1000].city}, ${cities[random1000].state}`,
+
+            //creating a generic geometry for each location
+            geometry: {
+                type: 'Point',
+                coordinates: [-73.9866, 40.7306]
+            },
 
             //descriptors[random number between 0 and the total elements of the array]
             title: `${sample(descriptors)} ${sample(places)}`,
@@ -50,7 +56,7 @@ const seedDB = async () => {
                 }
             ],
             description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-            
+
             //price: price, is the same of leaving just price:
             price
         })

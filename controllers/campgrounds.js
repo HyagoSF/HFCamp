@@ -1,4 +1,8 @@
 const Campground = require('../models/campground');
+const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
+const mapBoxToken = process.env.MAPBOX_TOKEN;
+const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
+
 const { cloudinary } = require('../cloudinary/index');
 
 
@@ -13,7 +17,12 @@ module.exports.renderNewForm = (req, res) => {
 };
 
 module.exports.createCampground = async (req, res, next) => {
+    const geodata = await geocoder.forwardGeocode({
+        query: req.body.location,
+        limit: 1
+    }).send()
     const newCamp = new Campground(req.body);
+    newCamp.geometry = geodata.body.features[0].geometry
 
     //map over the array that has been added to req.files, take the path and the filename, make a new object of each one, put that into a new array: newCamp.images
     newCamp.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
@@ -55,7 +64,6 @@ module.exports.renderEditForm = async (req, res) => {
 
 module.exports.updateCampground = async (req, res) => {
     const { id } = req.params;
-    console.log(req.body);
     const campground = await Campground.findByIdAndUpdate(id, req.body, { runValidators: true, new: true });
 
     //my req.files... makes me an array, and I cant push an array into an array, so i'm gonna create this variable imgs to make it an array
