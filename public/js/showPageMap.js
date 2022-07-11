@@ -11,6 +11,9 @@ map.on('style.load', () => {
 	map.setFog({}); // Set the default atmosphere style
 });
 
+const nav = new mapboxgl.NavigationControl();
+map.addControl(nav, 'bottom-right');
+
 //to make a Marker in the map
 new mapboxgl.Marker()
 	.setLngLat(campground.geometry.coordinates)
