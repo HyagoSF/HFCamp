@@ -17,7 +17,10 @@ const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
-
+const MongoStore = require('connect-mongo');
+// const dbUrl = process.env.DB_URL
+const dbUrl = 'mongodb://localhost:27017/yelp-camp';
+ 
 const userRoutes = require('./routes/users');
 const campgroundsRoutes = require('./routes/campgrounds');
 const reviewsRoutes = require('./routes/reviews');
@@ -28,8 +31,9 @@ main()
 	.catch((err) => console.log(err));
 
 async function main() {
-	await mongoose.connect('mongodb://localhost:27017/yelp-camp');
+	await mongoose.connect(dbUrl);
 }
+// 'mongodb://localhost:27017/yelp-camp';
 
 //SET TEMPLATE ENGINE
 app.engine('ejs', ejsMate);
@@ -42,7 +46,20 @@ app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(mongoSanitize());
 
+const store = MongoStore.create({
+	mongoUrl: dbUrl,
+	secret: 'thisshouldbeabettersecret',
+	touchAfter: 24 * 3600,
+});
+
+store.on('error', function (e) {
+	console.log('SECTION STORE ERROR', e);
+});
+
 const sessionConfig = {
+	store,
+	secret: 'thisshouldbeabettersecret',
+	touchAfter: 24 * 3600,
 	name: 'session',
 	secret: 'thisshouldbeabettersecret',
 	resave: false,
