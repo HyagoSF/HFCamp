@@ -19,8 +19,8 @@ const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
 const MongoStore = require('connect-mongo');
 // const dbUrl = process.env.DB_URL
-const dbUrl = 'mongodb://localhost:27017/yelp-camp';
- 
+const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
+
 const userRoutes = require('./routes/users');
 const campgroundsRoutes = require('./routes/campgrounds');
 const reviewsRoutes = require('./routes/reviews');
@@ -46,9 +46,11 @@ app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(mongoSanitize());
 
+const secret = process.env.SECRET || 'thisshouldbeabettersecret';
+
 const store = MongoStore.create({
 	mongoUrl: dbUrl,
-	secret: 'thisshouldbeabettersecret',
+	secret,
 	touchAfter: 24 * 3600,
 });
 
@@ -58,10 +60,9 @@ store.on('error', function (e) {
 
 const sessionConfig = {
 	store,
-	secret: 'thisshouldbeabettersecret',
 	touchAfter: 24 * 3600,
 	name: 'session',
-	secret: 'thisshouldbeabettersecret',
+	secret,
 	resave: false,
 	saveUninitialized: true,
 	// store: mongoStoreSoon
