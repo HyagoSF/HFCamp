@@ -176,6 +176,6 @@ app.use((err, req, res, next) => {
 
 //LISTENING ON PORT 8080 if it is locally
 const port = process.env.PORT || 8080;
-app.listen(8080, (req, res) => {
+app.listen(port, (req, res) => {
 	console.log(`Serving on port ${port}`);
 });
