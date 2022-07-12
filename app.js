@@ -174,7 +174,8 @@ app.use((err, req, res, next) => {
 	res.status(statusCode).render('error', { err });
 });
 
-//LISTENING ON PORT 8080
+//LISTENING ON PORT 8080 if it is locally
+const port = process.env.PORT || 8080;
 app.listen(8080, (req, res) => {
-	console.log('Serving on port 8080');
+	console.log(`Serving on port ${port}`);
 });
